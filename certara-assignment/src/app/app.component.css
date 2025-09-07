@@ -1,0 +1,238 @@
+/* Design tokens (additive; easy to theme later) */
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --chart-h: clamp(280px, 42vh, 420px); /* one knob for chart height */
+  --pill-radius: 999px;                 /* reusable “chip” radius */
+}
+
+/* Header layout: text + actions align on baseline */
+.hero {
+  display: flex;
+  align-items: flex-end; /* safer than 'end' across engines */
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: 14px;
+}
+.hero-text h1 {
+  margin: 0;
+  font-size: clamp(22px, 2.4vw, 28px);
+  letter-spacing: -0.01em;
+}
+.sub {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+/* Card primitives: consistent shell; drop in content */
+.card,
+.notice,
+.chip {
+  border: 1px solid var(--border); /* single source of truth */
+}
+.card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: var(--space-4);
+  margin-top: var(--space-4);
+}
+.card-head { margin-bottom: 8px; }
+.card-title {
+  margin: 0 0 2px;
+  font-size: clamp(16px, 2vw, 18px);
+}
+.card-sub { margin: 0; color: var(--muted); }
+
+/* Notices: inline status with sane defaults */
+.notice {
+  display: inline-block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--accent-soft);
+  color: var(--text);
+  margin: 10px 0 4px;
+}
+.notice.error {
+  /* semantic red; readable on light backgrounds */
+  background: rgba(220, 38, 38, .08);
+  border-color: rgba(220, 38, 38, .35);
+  color: #b91c1c;
+}
+
+/* Chip: compact filter/tag pill */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: var(--pill-radius);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+.chip-dismiss {
+  /* 24px target; center icon without fuss */
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  color: var(--muted);
+}
+.chip-dismiss:hover { background: rgba(0,0,0,.06); }
+
+/* Charts: container owns height & click area */
+.chart-card { padding: 12px 12px 4px; }
+.chart-wrap {
+  position: relative;
+  width: 100%;
+  height: var(--chart-h);
+  cursor: pointer;
+}
+
+/* Table: sticky header + unified cell padding */
+.table-wrap {
+  overflow: auto;
+  border-radius: calc(var(--radius) - 2px);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14.5px;
+}
+table :is(th, td) {
+  padding: 10px 12px; /* one place to tweak density */
+}
+thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1; /* keep header above scrolled rows */
+  background: linear-gradient(#fafafa, #f5f6f8);
+  color: #111827;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+tbody td {
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+tbody tr:hover { background: rgba(17,24,39,.03); }
+.title-col { font-weight: 600; letter-spacing: -0.01em; }
+
+/* Empty & muted text helpers */
+.empty { text-align: center; }
+.muted { color: var(--muted); }
+
+/* Mobile polish: stack header; tighten table padding */
+@media (max-width: 720px) {
+  .hero { flex-direction: column; align-items: flex-start; }
+  table :is(th, td) { padding: 9px 10px; }
+}
+
+/* Skeleton / shimmer (respects reduced motion) */
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--accent-soft);
+  border-radius: 8px;
+}
+.skeleton::after {
+  /* simple left->right sheen; cheap win while loading */
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,.55) 50%,
+    rgba(255,255,255,0) 100%);
+  animation: shimmer 1.2s infinite;
+  opacity: .9;
+  mix-blend-mode: lighten;
+}
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after { animation: none; }
+}
+
+/* Chart skeleton: 12 faux bars for a believable rhythm */
+.chart-skeleton {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: flex-end;
+  gap: 10px;
+  height: var(--chart-h);
+  padding: 16px 8px 8px;
+}
+.chart-skeleton .bar {
+  border-radius: 6px;
+  min-height: 24px;
+}
+/* hand-picked heights; looks “real” without being uniform */
+.chart-skeleton .bar:nth-child(1)  { height: 40%; }
+.chart-skeleton .bar:nth-child(2)  { height: 55%; }
+.chart-skeleton .bar:nth-child(3)  { height: 30%; }
+.chart-skeleton .bar:nth-child(4)  { height: 62%; }
+.chart-skeleton .bar:nth-child(5)  { height: 48%; }
+.chart-skeleton .bar:nth-child(6)  { height: 70%; }
+.chart-skeleton .bar:nth-child(7)  { height: 36%; }
+.chart-skeleton .bar:nth-child(8)  { height: 58%; }
+.chart-skeleton .bar:nth-child(9)  { height: 44%; }
+.chart-skeleton .bar:nth-child(10) { height: 66%; }
+.chart-skeleton .bar:nth-child(11) { height: 50%; }
+.chart-skeleton .bar:nth-child(12) { height: 72%; }
+
+/* Table skeleton helpers */
+.skel-line {
+  display: inline-block;
+  height: 14px;
+  border-radius: 6px;
+  line-height: 1;
+}
+.w-30 { width: 30%; }
+.w-40 { width: 40%; }
+.w-50 { width: 50%; }
+.w-70 { width: 70%; }
+.table-card tbody td { height: 42px; } /* anchors line height for rows */
+
+/* Horizontal chart scroll: bleed edges; hide chrome */
+.chart-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -12px;        /* bleed to edges on small screens */
+  padding: 0 12px 6px;
+}
+.chart-rail {
+  min-width: 600px;       /* desktop guardrail; mobile can override inline */
+}
+.chart-scroll::-webkit-scrollbar { height: 0; } /* quiet scrollbar */
+
+/* Year tabs: scrollable pills; simple active state */
+.year-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 4px 0 8px;
+}
+.year-tab {
+  flex: 0 0 auto;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: var(--pill-radius);
+  border: 1px solid rgba(100,116,139,.35);
+  background: #fff;
+}
+.year-tab.active {
+  background: rgba(124,58,237,.10);
+  border-color: #7c3aed;
+}

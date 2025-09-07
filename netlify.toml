@@ -1,0 +1,17 @@
+[build]
+  # run the build from the inner app folder
+  base = "certara-assignment"
+
+  # install deps + build + print what was produced
+  command = "npm ci && npm run build:netlify && ls -la dist && ls -la dist/certara-assignment && ls -la dist/certara-assignment/browser"
+
+  # publish path is relative to the 'base' above
+  publish = "dist/certara-assignment/browser"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

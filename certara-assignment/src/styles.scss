@@ -1,0 +1,90 @@
+/* Theme tokens: light defaults */
+:root{
+  --bg:            #f7f8fa;
+  --surface:       #ffffff;
+  --text:          #111827;
+  --muted:         #64748b;
+  --border:        #e5e7eb;
+  --accent:        #7c3aed;
+  --accent-strong: #6d28d9;
+  --accent-soft:   #7C3AED14;
+  --cyan:          #06b6d4;
+
+  --radius: 12px;
+  --shadow: 0 8px 28px #02061714;
+
+  /* shared spacing/layout; matches the other file */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --container-max: 1120px;
+}
+
+/* Dark mode tokens override */
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:      #0b0e14;
+    --surface: #111521;
+    --text:    #e5e7eb;
+    --muted:   #9aa4b2;
+    --border:  #1f2430;
+    --accent:        #8b5cf6;
+    --accent-strong: #7c3aed;
+    --accent-soft:   #8B5CF624;
+    --shadow: 0 8px 28px #00000059;
+  }
+}
+
+/* Box model: include pseudo-elements */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* Motion sanity */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Base page: theme + typography */
+html {
+  height: 100%;
+  color-scheme: light dark; /* lets form controls match theme */
+}
+body {
+  min-height: 100%;
+  margin: 0; /* kill UA 8px margin */
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif;
+  line-height: 1.5; /* readable base */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Links: keep your current underline-on-hover behavior */
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 2px; }
+
+/* Buttons: inherit text; obvious focus for keyboard users */
+button {
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+  background: transparent;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Container: centered page frame */
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 24px 20px 40px; /* keep existing rhythm */
+}

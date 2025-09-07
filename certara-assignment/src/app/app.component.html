@@ -1,0 +1,114 @@
+<div class="container" role="main">
+  <!-- Header: page title + selected month chip -->
+  <header class="hero">
+    <div class="hero-text">
+      <h1>Job Postings</h1>
+      <p class="sub" id="chart-sub">Monthly trend + details by month</p>
+    </div>
+
+    <div class="hero-actions" *ngIf="selectedMonth">
+      <span class="chip">
+        {{ selectedMonthPretty || selectedMonth }}
+        <button
+          class="chip-dismiss"
+          type="button"
+          (click)="selectedMonth = null"
+          aria-label="Clear selected month"
+        >&times;</button>
+      </span>
+    </div>
+  </header>
+
+  <!-- Inline error: announce immediately -->
+  <div *ngIf="!loading && error" class="notice error" role="alert" aria-live="assertive">
+    {{ error }}
+  </div>
+
+  <!-- Loading state: skeleton chart -->
+  <ng-container *ngIf="loading; else loadedContent">
+    <section class="card chart-card" role="status" aria-live="polite" aria-busy="true">
+      <div class="card-head">
+        <h2 class="card-title">Jobs by Month</h2>
+        <p class="card-sub">Fetching data…</p>
+      </div>
+
+      <div class="chart-skeleton">
+        <div class="bar skeleton" *ngFor="let _ of chartSkeletonBars"></div>
+      </div>
+    </section>
+  </ng-container>
+
+  <!-- Loaded: chart + table or empty state -->
+  <ng-template #loadedContent>
+    <section class="card chart-card" aria-labelledby="jobs-by-month-title">
+      <div class="card-head">
+        <h2 class="card-title" id="jobs-by-month-title">Jobs by Month</h2>
+        <p class="card-sub">Click a bar to view that month’s jobs</p>
+      </div>
+
+      <!-- Year filter tabs (mobile only) -->
+      <div class="year-tabs" *ngIf="isMobileView && years.length > 1">
+        <button
+          *ngFor="let y of years"
+          class="year-tab"
+          type="button"
+          [class.active]="y === activeYear"
+          [attr.aria-pressed]="y === activeYear"
+          (click)="setActiveYear(y)"
+        >
+          {{ y }}
+        </button>
+      </div>
+
+      <!-- Chart wrapper handles height; canvas handles interaction -->
+      <div class="chart-wrap" [style.height.px]="chartHeight">
+        <canvas
+          baseChart
+          [data]="barChartData"
+          [type]="'bar'"
+          [options]="barChartOptions"
+          (chartClick)="onChartClick($event)"
+          [attr.aria-describedby]="'chart-sub'"
+        ></canvas>
+      </div>
+    </section>
+
+    <!-- Results table for the selected month -->
+    <section
+      class="card table-card"
+      *ngIf="selectedMonth && jobsForSelectedMonth.length"
+      aria-labelledby="jobs-for-month-title"
+    >
+      <div class="card-head">
+        <h2 class="card-title" id="jobs-for-month-title">Jobs for {{ selectedMonthPretty }}</h2>
+        <p class="card-sub">{{ jobsForSelectedMonth.length }} postings</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Organization</th>
+              <th scope="col">Location</th>
+              <th scope="col">Date Published</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let job of jobsForSelectedMonth">
+              <td class="title-col">{{ job.websiteTitle }}</td>
+              <td>{{ job.websiteOrganization }}</td>
+              <td>{{ job.websiteLocation }}</td>
+              <td>{{ job.websiteDatePublished | date: 'mediumDate' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Empty state when a month is selected but has no job rows. Seems unlikely. -->
+    <section class="card empty" *ngIf="selectedMonth && !jobsForSelectedMonth.length">
+      <p class="muted">No jobs for {{ selectedMonthPretty || selectedMonth }}.</p>
+    </section>
+  </ng-template>
+</div>
