@@ -14,7 +14,7 @@ Once the server is running, open your browser and navigate to `http://localhost:
 
 ## Live prod deployment
 
-The application is deployed via netlify with help from a .toml configuration file. It can be viewed at `https://dsg-api-test.netlify.app`
+The application is deployed via netlify with help from a .toml configuration file. It can be viewed at https://dsg-api-test.netlify.app`(https://dsg-api-test.netlify.app`)
 
 ## Building
 
